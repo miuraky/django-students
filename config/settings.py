@@ -16,22 +16,26 @@ import environ
 from decouple import config
 from dj_database_url import parse as dburl
 
-# ベースディレクトリの定義
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 環境変数の読み込み
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, ".env"))
 
-# デフォルトのDB URL（SQLite）
-default_dburl = "sqlite:///" + str(BASE_DIR / "db.sqlite3")
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# セキュリティ設定
-SECRET_KEY = 'django-insecure-=0nl53mkjsxc+pa521x+5*c*w4=0zrn*qt$cvjw!f89#91rwo^'
-DEBUG = True  # 本番環境ではFalseにすること
-ALLOWED_HOSTS = ['*']  # 必要に応じて制限する
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-xh02_f6vw3yv7!yml8-#$gj8!lh7-8=+4gx&8lmjc+_ig4s4sj'
 
-# アプリケーション定義
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ['*']
+
+
+# Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,13 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bbs.apps.BbsConfig',
-    'accounts.apps.AccountsConfig',
     'django_bootstrap5',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 静的ファイルを本番環境で配信
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,9 +60,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
-WSGI_APPLICATION = 'config.wsgi.application'
 
-# テンプレート設定
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -76,38 +78,63 @@ TEMPLATES = [
     },
 ]
 
-# 認証後のリダイレクト先
-LOGIN_REDIRECT_URL = '/bbs/'
+WSGI_APPLICATION = 'config.wsgi.application'
 
-# データベース設定（環境変数から）
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+default_dburl = "sqlite:///" + str(BASE_DIR / "db.sqlite3")
+
 DATABASES = {
-    'default': config('DATABASE_URL', default=default_dburl, cast=dburl),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
-# パスワードバリデーション
+
+# Password validation
+# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
-# 国際化
-LANGUAGE_CODE = 'ja'
-TIME_ZONE = 'Asia/Tokyo'
+
+# Internationalization
+# https://docs.djangoproject.com/en/4.2/topics/i18n/
+
+LANGUAGE_CODE = 'ja'    # 言語設定
+
+TIME_ZONE = 'Asia/Tokyo'    # タイムゾーン
+
 USE_I18N = True
+
 USE_TZ = True
 
-# 静的ファイル設定
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = str(BASE_DIR / 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# デフォルトのPrimaryKey型
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 環境変数からスーパーユーザー情報を取得
-SUPERUSER_NAME = env("SUPERUSER_NAME")
-SUPERUSER_EMAIL = env("SUPERUSER_EMAIL")
-SUPERUSER_PASSWORD = env("SUPERUSER_PASSWORD")
+# ログイン後のリダイレクト先
+LOGIN_REDIRECT_URL = '/bbs/'
